@@ -1,6 +1,7 @@
 from string import ascii_lowercase as lc
 import math
 import collections
+from graph_data import *
 
 def toNumber(letter):
     return lc.index(letter)
@@ -99,23 +100,3 @@ def transpose(g_dict):
         for to_vertex in edges:
             g_trans[to_vertex].append(from_vertex)
     return g_trans
-
-g_dict_und = {'a': ['b', 'c', 'd'],
-     'b': ['a', 'c'],
-     'c': ['b', 'a'],
-     'd': ['a', 'e'],
-     'e': ['d']}
-
-g_dict_dir = {'a': ['b', 'c'],
-     'b': ['c'],
-     'c': ['b', 'a'],
-     'd': ['a'],
-     'e': []}
-
-d = {'a': ['b', 'c', 'd'],
-     'b': ['a', 'c'],
-     'c': ['a', 'b'],
-     'd': ['a'],
-     'e': ['f'],
-     'f': ['e'],
-     'g': []}
