@@ -100,3 +100,6 @@ def transpose(g_dict):
         for to_vertex in edges:
             g_trans[to_vertex].append(from_vertex)
     return g_trans
+
+def completeGraph(order):
+    return {x : [y for y in lc[:order] if y != x] for x in lc[:order]}
