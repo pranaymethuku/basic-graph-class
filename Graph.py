@@ -8,6 +8,7 @@ class GraphType(Enum):
 
 class Graph:
 
+    #creates empty undirected graph by default
     def __init__(self, graph_type = None):
         self.rep = {}
         if graph_type == None:
