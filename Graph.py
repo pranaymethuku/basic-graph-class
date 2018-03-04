@@ -9,12 +9,19 @@ class GraphType(Enum):
 class Graph:
 
     #creates empty undirected graph by default
-    def __init__(self, graph_type = None):
-        self.rep = {}
-        if graph_type == None:
-            graph_type = GraphType.undirected
-        assert type(graph_type) == GraphType
-        self.graph_type = graph_type
+    def __init__(self, graph_type = None, existing_graph = None):
+        if existing_graph == None:
+            self.rep = {}
+            if graph_type == None:
+                graph_type = GraphType.undirected
+            assert type(graph_type) == GraphType
+            self.graph_type = graph_type
+        else:
+            assert type(existing_graph) == dict
+            assert graph_type != None
+            self.rep = existing_graph
+            self.graph_type = graph_type
+
 
     def __str__(self):
         return str(self.rep)
@@ -171,5 +178,14 @@ class Graph:
             new_edges = nodes - set(edges)
             new_edges.remove(node)
             g_comp.setdefault(node, new_edges)
-        return g_comp
+        return Graph(self.graph_type, g_comp)
+
+    #g_dict is a dictionary representation of a directed graph
+    #returns a dictionary representation of the transpose of the graph
+    def get_transpose(self):
+        g_transpose = {vertex:set() for vertex in self.rep.keys()}
+        for from_vertex, edges in self.rep.items():
+            for to_vertex in edges:
+                g_transpose[to_vertex].add(from_vertex)
+        return Graph(self.graph_type, g_transpose)
         
