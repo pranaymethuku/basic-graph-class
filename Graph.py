@@ -1,9 +1,19 @@
 import math
 import collections
+from enum import Enum
+
+class GraphType(Enum):
+    undirected = 'undir'
+    directed = 'dir'
+
 class Graph:
 
-    def __init__(self):
+    def __init__(self, graph_type = None):
         self.rep = {}
+        if graph_type == None:
+            graph_type = GraphType.undirected
+        assert type(graph_type) == GraphType
+        self.graph_type = graph_type
 
     def __str__(self):
         return str(self.rep)
@@ -11,7 +21,7 @@ class Graph:
     #element can be a node, node list, 
     #edge tuple, list of edge tuples
     #adds element to self depending on its type
-    def __iadd__(self, element):
+    def __add__(self, element):
         if type(element) is tuple:
             self.add_edge(element)
         elif type(element) is list and len(element) > 0:
@@ -26,7 +36,7 @@ class Graph:
     #edge tuple, list of edge tuples
     #deletes element from self depending on its type
     #element MUST be in self
-    def __isub__(self, element):
+    def __sub__(self, element):
         if type(element) is tuple:
             self.delete_edge(element)
         elif type(element) is list and len(element) > 0:
@@ -51,7 +61,8 @@ class Graph:
     def add_edge(self, edge):
         node1, node2 = edge
         self.rep[node1].add(node2)
-        self.rep[node2].add(node1)
+        if self.graph_type == GraphType.undirected:
+            self.rep[node2].add(node1)
 
     #edges is a list of tuples of nodes
     def add_edges(self, edges):
@@ -66,18 +77,23 @@ class Graph:
     def order(self):
         return len(self.rep)
 
+    #same as order
+    def __len__(self):
+        return self.order()
+
     #size is num of edges
     def size(self):
-        totalEdges = 0
+        total_edges = 0
         for node in self.rep.keys():
-            totalEdges += self.degree(node)
-        return totalEdges // 2
+            total_edges += self.degree(node)
+        return total_edges // 2
 
     #edge is a tuple of nodes
     def delete_edge(self, edge):
         node1, node2 = edge
         self.rep[node1].remove(node2)
-        self.rep[node2].remove(node1)
+        if self.graph_type == GraphType.undirected:
+            self.rep[node2].remove(node1)
     
     #edges is a list of tuples of nodes
     def delete_edges(self, edges):
