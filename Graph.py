@@ -6,6 +6,9 @@ class GraphType(Enum):
     undirected = 'undir'
     directed = 'dir'
 
+#Graph class represented as an adjacency list,
+#self.rep is a dictionary containing nodes as keys,
+#set containing adjacent nodes as corresponding values
 class Graph:
 
     #creates empty undirected graph by default
@@ -119,20 +122,25 @@ class Graph:
         for node in nodes:
             self.delete_node(node)
 
-    def bfs(self, node):
-        result = {x : [math.inf, None] for x in self.rep.keys()}
-        result[node][0] = 0
+    #returns a relative dictionary contaning nodes paired with
+    #objects containing relative distance to the start_node, (math.inf if not valid)
+    #and their parent nodes respectively (None if not valid)
+    def bfs(self, start_node):
+        result = {x : {'distance' : math.inf, 'parent' : None} for x in self.rep.keys()}
+        result[start_node].distance = 0
         q = collections.deque()
-        q.append(node)
+        q.append(start_node)
         while q:
             parent_node = q.popleft()
             for child_node in self.rep[parent_node]:
-                if result[child_node][0] == math.inf:
-                    result[child_node][0] = result[parent_node][0] + 1
-                    result[child_node][1] = parent_node
+                if result[child_node].distance == math.inf:
+                    result[child_node].distance = result[parent_node].distance + 1
+                    result[child_node].parent = parent_node
                     q.append(child_node)
         return result
 
+    #returns a list containing shortest path
+    #from v1 to v2, and none if it doesn't exist
     def get_shortest_path(self, v1, v2):
         bfs_v1 = self.bfs(v1)
         if not(bfs_v1[v2][0] == math.inf):
@@ -169,7 +177,6 @@ class Graph:
             conn_comps += 1
         return conn_comps
 
-    #self.rep is a dictionary representation of an undirected graph
     #returns a dictionary representation of the complement of the graph
     def get_complement(self):
         nodes = set(self.rep)
@@ -180,7 +187,6 @@ class Graph:
             g_comp.setdefault(node, new_edges)
         return Graph(self.graph_type, g_comp)
 
-    #g_dict is a dictionary representation of a directed graph
     #returns a dictionary representation of the transpose of the graph
     def get_transpose(self):
         g_transpose = {vertex:set() for vertex in self.rep.keys()}
