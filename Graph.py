@@ -102,6 +102,13 @@ class Graph:
         """
         return len(self.rep[node])
 
+    def get_neighbors(self, node):
+        """
+            node is a node object
+            returns set of neighbors of node
+        """
+        return self.rep[node]
+
     def order(self):
         """
             order is num of nodes
@@ -165,7 +172,7 @@ class Graph:
         q.append(start_node)
         while q:
             parent_node = q.popleft()
-            for child_node in self.rep[parent_node]:
+            for child_node in self.get_neighbors(parent_node):
                 if result[child_node].distance == math.inf:
                     result[child_node].distance = result[parent_node].distance + 1
                     result[child_node].parent = parent_node
@@ -190,12 +197,12 @@ class Graph:
         return result
 
     def explore(self, start_node, visited):
-        if not visited or len(visited) != self.num_of_edges:
+        if not visited or len(visited) != len(self):
             visited = {x : False for x in self.rep.keys()}
-        visited[self] = True
-        for child_node in self.rep[start_node]:
-            visited[child_node] = True
-            self.explore(child_node, visited)
+        visited[start_node] = True
+        for child_node in self.get_neighbors(start_node):
+            if not visited[child_node]:
+                self.explore(child_node, visited)
 
     def is_connected(self):
         """
