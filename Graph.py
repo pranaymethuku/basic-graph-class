@@ -9,27 +9,25 @@ class GraphType(Enum):
 
 class Graph:
     """
-        #Graph class represented as an adjacency list,
-        #self.rep is a dictionary containing nodes as keys,
-        #set containing adjacent nodes as corresponding values
+        Graph class represented as an adjacency list,
+        self.rep is a dictionary containing nodes as keys,
+        set containing adjacent nodes as corresponding values
+        
+        Creates an empty undirected graph if no parameters given
+
+        Requires
+        --------
+        If existing_graph parameter is non-Null, 
+        graph_type parameter must be non-Null.
+        
+        If existing graph type is a dictionary (adjacency list),
+        value type must be a Set of nodes.
+        
+        If existing graph type is a list of lists (adjacency matrix),
+        it is converted into an adjacency list representation.           
     """
-
     def __init__(self, graph_type = None, existing_graph = None):
-        """
-            Creates an empty undirected graph if no parameters given
-
-            Requires
-            --------
-            If existing_graph parameter is non-Null, 
-            graph_type parameter must be non-Null.
-            
-            If existing graph type is a dictionary (adjacency list),
-            value type must be a Set of nodes.
-            
-            If existing graph type is a list of lists (adjacency matrix),
-            
-
-        """
+        
         if type(existing_graph) == dict:
             assert graph_type != None
             self.rep = existing_graph
@@ -179,7 +177,7 @@ class Graph:
 
     def bfs(self, start_node):
         """
-            returns a relative dictionary contaning nodes paired with
+            Returns a relative dictionary contaning nodes paired with
             objects containing relative distance to the start_node, (math.inf if not valid)
             and their parent nodes respectively (None if not valid)
         """
@@ -199,7 +197,7 @@ class Graph:
     
     def get_shortest_path(self, v1, v2):
         """
-            returns a list containing shortest path
+            Returns a list containing shortest path
             from v1 to v2, and none if it doesn't exist
         """
         bfs_v1 = self.bfs(v1)
