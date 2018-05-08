@@ -6,13 +6,18 @@ class GraphType(Enum):
     undirected = 'undir'
     directed = 'dir'
 
-#Graph class represented as an adjacency list,
-#self.rep is a dictionary containing nodes as keys,
-#set containing adjacent nodes as corresponding values
-class Graph:
 
-    #creates empty undirected graph by default
+class Graph:
+    """
+        #Graph class represented as an adjacency list,
+        #self.rep is a dictionary containing nodes as keys,
+        #set containing adjacent nodes as corresponding values
+    """
+
     def __init__(self, graph_type = None, existing_graph = None):
+        """
+            creates empty undirected graph by default
+        """
         if existing_graph == None:
             self.rep = {}
             if graph_type == None:
@@ -29,10 +34,12 @@ class Graph:
     def __str__(self):
         return str(self.rep)
 
-    #element can be a node, node list, 
-    #edge tuple, list of edge tuples
-    #adds element to self depending on its type
     def __add__(self, element):
+        """
+            element can be a node, node list, 
+            edge tuple, list of edge tuples
+            deletes element from self depending on its type
+        """
         if type(element) is tuple:
             self.add_edge(element)
         elif type(element) is list and len(element) > 0:
@@ -43,11 +50,13 @@ class Graph:
         else:
             self.add_node(element) 
     
-    #element can be a node, node list, 
-    #edge tuple, list of edge tuples
-    #deletes element from self depending on its type
-    #element MUST be in self
     def __sub__(self, element):
+        """
+            element can be a node, node list, 
+            edge tuple, list of edge tuples
+            deletes element from self depending on its type
+            element MUST be in self
+        """
         if type(element) is tuple:
             self.delete_edge(element)
         elif type(element) is list and len(element) > 0:
@@ -58,74 +67,98 @@ class Graph:
         else:
             self.delete_node(element) 
 
-
-    #node is a node object
     def add_node(self, node):
+        """
+            node is a node object
+        """
         self.rep[node] = set()
         
-    #nodes is a list or set of nodes
     def add_nodes(self, nodes):
+        """
+            nodes is a list or set of nodes
+        """
         for node in nodes:
             self.add_node(node)
 
-    #edge is a tuple of nodes
     def add_edge(self, edge):
+        """
+            edge is a tuple of nodes
+        """
         node1, node2 = edge
         self.rep[node1].add(node2)
         if self.graph_type == GraphType.undirected:
             self.rep[node2].add(node1)
 
-    #edges is a list of tuples of nodes
     def add_edges(self, edges):
+        """
+            edges is a list of tuples of nodes
+        """
         for edge in edges:
             self.add_edge(edge)
 
-    #node is a node object
     def degree(self, node):
+        """
+            node is a node object
+        """
         return len(self.rep[node])
 
-    #order is num of nodes
     def order(self):
+        """
+            order is num of nodes
+        """
         return len(self.rep)
 
-    #same as order
     def __len__(self):
+        """
+            returns num of nodes
+        """
         return self.order()
 
-    #size is num of edges
-    def size(self):
+    def num_of_edges(self):
         total_edges = 0
         for node in self.rep.keys():
             total_edges += self.degree(node)
         return total_edges // 2
 
-    #edge is a tuple of nodes
     def delete_edge(self, edge):
+        """
+            edge is a tuple of nodes
+        """
         node1, node2 = edge
         self.rep[node1].remove(node2)
         if self.graph_type == GraphType.undirected:
             self.rep[node2].remove(node1)
     
-    #edges is a list of tuples of nodes
     def delete_edges(self, edges):
+        """
+            edges is a list of tuples of nodes
+        """
         for edge in edges:
             self.delete_edge(edge)
 
-    #node is a node object
     def delete_node(self, node):
+        """
+            node is a node object
+        """
         for adjacent_node in self.rep[node]:
             self.rep[adjacent_node].remove(node)
         self.rep.pop(node)
 
-    #nodes is a list or set of nodes
     def delete_nodes(self, nodes):
+        """
+            nodes is a list of node objects
+        """
         for node in nodes:
             self.delete_node(node)
 
-    #returns a relative dictionary contaning nodes paired with
-    #objects containing relative distance to the start_node, (math.inf if not valid)
-    #and their parent nodes respectively (None if not valid)
+    #Utility Definitions follow
+
     def bfs(self, start_node):
+        """
+            returns a relative dictionary contaning nodes paired with
+            objects containing relative distance to the start_node, (math.inf if not valid)
+            and their parent nodes respectively (None if not valid)
+        """
         result = {x : {'distance' : math.inf, 'parent' : None} for x in self.rep.keys()}
         result[start_node].distance = 0
         q = collections.deque()
@@ -139,9 +172,12 @@ class Graph:
                     q.append(child_node)
         return result
 
-    #returns a list containing shortest path
-    #from v1 to v2, and none if it doesn't exist
+    
     def get_shortest_path(self, v1, v2):
+        """
+            returns a list containing shortest path
+            from v1 to v2, and none if it doesn't exist
+        """
         bfs_v1 = self.bfs(v1)
         if not(bfs_v1[v2][0] == math.inf):
             result = [v2]
@@ -153,8 +189,18 @@ class Graph:
             result = None
         return result
 
-    #return True if the self is connected, False otherwise    
+    def explore(self, start_node, visited):
+        if not visited or len(visited) != self.num_of_edges:
+            visited = {x : False for x in self.rep.keys()}
+        visited[self] = True
+        for child_node in self.rep[start_node]:
+            visited[child_node] = True
+            self.explore(child_node, visited)
+
     def is_connected(self):
+        """
+            return True if the self is connected, False otherwise    
+        """
         some_item = self.rep.popitem()
         v1 = some_item[0]
         self.rep.setdefault(some_item[0], some_item[1])
@@ -164,8 +210,10 @@ class Graph:
                 return False
         return True
 
-    #returns the number of connected components in self
     def count_conn_comps(self):
+        """
+            returns the number of connected components in self 
+        """
         nodes = set(self.rep)
         conn_comps = 0
         while nodes:
@@ -177,8 +225,10 @@ class Graph:
             conn_comps += 1
         return conn_comps
 
-    #returns a dictionary representation of the complement of the graph
     def get_complement(self):
+        """
+            returns a dictionary representation of the complement of the graph
+        """
         nodes = set(self.rep)
         g_comp = {}
         for node, edges in self.rep.items():
@@ -187,8 +237,10 @@ class Graph:
             g_comp.setdefault(node, new_edges)
         return Graph(self.graph_type, g_comp)
 
-    #returns a dictionary representation of the transpose of the graph
     def get_transpose(self):
+        """
+            returns a dictionary representation of the transpose of the graph
+        """
         g_transpose = {vertex:set() for vertex in self.rep.keys()}
         for from_vertex, edges in self.rep.items():
             for to_vertex in edges:
