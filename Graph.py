@@ -16,20 +16,37 @@ class Graph:
 
     def __init__(self, graph_type = None, existing_graph = None):
         """
-            creates empty undirected graph by default
+            Creates an empty undirected graph if no parameters given
+
+            Requires
+            --------
+            If existing_graph parameter is non-Null, 
+            graph_type parameter must be non-Null.
+            
+            If existing graph type is a dictionary (adjacency list),
+            value type must be a Set of nodes.
+            
+            If existing graph type is a list of lists (adjacency matrix),
+            
+
         """
-        if existing_graph == None:
+        if type(existing_graph) == dict:
+            assert graph_type != None
+            self.rep = existing_graph
+            self.graph_type = graph_type
+        elif type(existing_graph) == list:
+            assert graph_type != None
+            self.graph_type = graph_type
+            self.rep = {}
+            for index, row in enumerate(existing_graph):
+                edges = set([index for index, element in enumerate(row) if element is 1])
+                self.rep.setdefault(index, edges)
+        elif existing_graph == None:
             self.rep = {}
             if graph_type == None:
                 graph_type = GraphType.undirected
             assert type(graph_type) == GraphType
-            self.graph_type = graph_type
-        else:
-            assert type(existing_graph) == dict
-            assert graph_type != None
-            self.rep = existing_graph
-            self.graph_type = graph_type
-
+            self.graph_type = graph_type          
 
     def __str__(self):
         return str(self.rep)
@@ -196,13 +213,23 @@ class Graph:
             result = None
         return result
 
-    def explore(self, start_node, visited):
-        if not visited or len(visited) != len(self):
-            visited = {x : False for x in self.rep.keys()}
-        visited[start_node] = True
-        for child_node in self.get_neighbors(start_node):
+    def explore(self, parent_node, visited = None):
+        if visited is None:
+            visited = {x : False for x in self.rep.keys()} 
+        elif len(visited) != len(self):
+            visited.update({x : False for x in self.rep.keys()})
+        visited[parent_node] = True
+        for child_node in self.get_neighbors(parent_node):
             if not visited[child_node]:
                 self.explore(child_node, visited)
+        return visited
+    
+    def dfs(self):
+        visited = {x : False for x in self.rep.keys()}
+        for node in self.rep.keys():
+            if not visited(node):
+                self.explore(node, visited)
+        return visited
 
     def is_connected(self):
         """
