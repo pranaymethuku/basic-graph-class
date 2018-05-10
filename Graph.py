@@ -212,7 +212,13 @@ class Graph:
         return result
 
     def explore(self, parent_node, visited = None):
-        if visited is None:
+        """
+            Sub-procedure of DFS, sets value of visited nodes to true
+            Updates visited if already present, else creates it
+
+            Returns visited after exploring graph
+        """
+        if type(visited) is not dict:
             visited = {x : False for x in self.rep.keys()} 
         elif len(visited) != len(self):
             visited.update({x : False for x in self.rep.keys()})
@@ -223,6 +229,11 @@ class Graph:
         return visited
     
     def dfs(self):
+        """
+            Returns a relative dictionary contaning nodes paired with
+            true, indicating all nodes being visited
+        """
+        #Need to review decision of returning object
         visited = {x : False for x in self.rep.keys()}
         for node in self.rep.keys():
             if not visited(node):
