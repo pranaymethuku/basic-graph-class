@@ -1,2 +1,2 @@
-# graphtheory-with-python
-Applications of basic graph theory with Python.
+# Basic Graph Class
+Implementing a graph class with Python
